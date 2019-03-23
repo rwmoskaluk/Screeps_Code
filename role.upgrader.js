@@ -7,9 +7,9 @@
  * mod.thing == 'a thing'; // true
  */
 
-var functionCreep = require('function.creep');
+const functionCreep = require('function.creep');
 
-var roleUpgrader = {
+let roleUpgrader = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
@@ -31,7 +31,7 @@ var roleUpgrader = {
                 }
             }
             else {
-                var sources = creep.pos.findClosestByRange(FIND_SOURCES);
+                let sources = creep.pos.findClosestByRange(FIND_SOURCES);
                 if(creep.harvest(sources) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(sources, {visualizePathStyle: {stroke: '#ffaa00'}});
                 }

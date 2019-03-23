@@ -16,22 +16,6 @@ module.exports = {
         * runs every X ticks as CPU intensive
         */
 
-        let spawn = room.find(FIND_MY_STRUCTURES, {
-            filter: function (structure) {
-                return structure.structureType == STRUCTURE_SPAWN;
-            }
-        });
-        if (global.showDiagnostics.spawn_roads == true) {
-            new RoomVisual().circle(spawn[0].pos.x + 1, spawn[0].pos.y + 1, {fill: '#ff0000'});
-            new RoomVisual().circle(spawn[0].pos.x - 1, spawn[0].pos.y + 1, {fill: '#ff0000'});
-            new RoomVisual().circle(spawn[0].pos.x, spawn[0].pos.y + 1, {fill: '#ff0000'});
-            new RoomVisual().circle(spawn[0].pos.x + 1, spawn[0].pos.y, {fill: '#ff0000'});
-            new RoomVisual().circle(spawn[0].pos.x + 1, spawn[0].pos.y - 1, {fill: '#ff0000'});
-            new RoomVisual().circle(spawn[0].pos.x, spawn[0].pos.y - 1, {fill: '#ff0000'});
-            new RoomVisual().circle(spawn[0].pos.x - 1, spawn[0].pos.y, {fill: '#ff0000'});
-            new RoomVisual().circle(spawn[0].pos.x - 1, spawn[0].pos.y - 1, {fill: '#ff0000'});
-
-        }
         /*
         room.createConstructionSite(spawn[0].pos.x + 1, spawn[0].pos.y + 1, STRUCTURE_ROAD);
         room.createConstructionSite(spawn[0].pos.x - 1, spawn[0].pos.y + 1, STRUCTURE_ROAD);
@@ -146,15 +130,6 @@ module.exports = {
                 }
             }
         }
-        //check that position is valid for construction site otherwise iterate in a direction
-        if (Memory.tower_Locations) {
-            if (global.showDiagnostics.tower == true) {
-                for (let i = 0; i < Memory.tower_Locations.length; i++) {
-                    new RoomVisual().circle(Memory.tower_Locations[i].x, Memory.tower_Locations[i].y, {fill: '#ff0005'});
-                }
-            }
-        }
-
     },
     spawn_design: function (room) {
         /*
@@ -208,23 +183,6 @@ module.exports = {
                 Memory.buildZones.push(this.quad_patterns(room, spawn, quad_choice));
             }
         }
-
-        if (global.showDiagnostics.spawn == true) {
-            for(let i = 0; i < Memory.buildZones.length; i++){
-                for (let j = 0; j < Memory.buildZones[i].length; j++) {
-                    if (Memory.buildZones[i][j].planned_construction == 'road') {
-                        new RoomVisual().circle(Memory.buildZones[i][j].x, Memory.buildZones[i][j].y, {fill: '#ff25f5'});
-
-                    }
-                    else {
-                        new RoomVisual().circle(Memory.buildZones[i][j].x, Memory.buildZones[i][j].y, {fill: '#213dff'});
-
-                    }
-                }
-            }
-        }
-
-        this.quad_patterns(room, spawn, 1)
     },
 
     quad_patterns: function (room, spawn, quad_choice) {

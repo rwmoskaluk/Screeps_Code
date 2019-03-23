@@ -18,13 +18,13 @@
  *
  */
 
-var functionCreep = {
+let functionCreep = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
-        var creepMaxTime = 1500;
-        var creepTickFullPercent = 0.95;
-        var creepTickPercent = 0.3;
+        let creepMaxTime = 1500;
+        let creepTickFullPercent = 0.95;
+        let creepTickPercent = 0.3;
         if (creep.memory.renewing == false) {
 
             if (creep.ticksToLive <= creepTickPercent * creepMaxTime) {
@@ -32,7 +32,7 @@ var functionCreep = {
             }
         }
         else {
-            var spawn = creep.room.find(FIND_MY_STRUCTURES, {
+            let spawn = creep.room.find(FIND_MY_STRUCTURES, {
                 filter: function(structure) {
                     return structure.structureType == STRUCTURE_SPAWN;
                 }

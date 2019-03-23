@@ -7,7 +7,6 @@
             3) continue with intial find search until each task is complete, then repeat to update
 */
 
-const calculations = require('./function.calculations');
 const roomManager = require('./manager.room');
 const creepManager = require('./manager.creep');
 const defenseTower = require('defense.tower');
@@ -44,6 +43,7 @@ module.exports.loop = function() {
             if(hostiles.length > 0) {
                 defenseTower.run(currentRoom);
             }
+
             creepManager.simple_manager(currentRoom);
             
         }

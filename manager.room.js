@@ -10,6 +10,7 @@
 const global = require('global.variables');
 const calculations = require('./function.calculations');
 const building_Layouts = require('./function.buildings');
+const diagnostics = require('./diagnostics');
 
 let self = module.exports = {
     room_info: function(room) {
@@ -21,22 +22,7 @@ let self = module.exports = {
             filter: {structureType: STRUCTURE_TOWER}
         });
         
-        /*
-        * RCL       Energy to Upgrade       Structures
-        *---------------------------------------------
-        * 0                 -               
-        *---------------------------------------------
-        * 1                 200             
-        *---------------------------------------------
-        * 2                 45000           5 ext
-        *---------------------------------------------
-        * 3                 135000          10 ext, 1 tower
-        *---------------------------------------------
-        * 4                 405000          20 ext, 1 tower
-        *---------------------------------------------
-        *
-        *
-        */
+
         
         /*
         * Calculate optimal path to each source and controller from spawn
@@ -65,15 +51,6 @@ let self = module.exports = {
             }
             Memory.paths = paths;
         }
-        //draws the roomVisual in red for the source and controller paths
-        if (global.showDiagnostics.paths == true) {
-            let colors = ['#ffffff', '#00FFFF', '#FF8C00', '#7FFF00', '#FFD700'];
-            for(let i = 0; i < Memory.paths.length; i++){
-                for(let j = 0; j < Memory.paths[i].object_Path.length - 1; j++) {
-                    new RoomVisual().line(Memory.paths[i].object_Path[j].x, Memory.paths[i].object_Path[j].y, Memory.paths[i].object_Path[j + 1].x, Memory.paths[i].object_Path[j + 1].y, {color: colors[i]});
-                }
-            }
-        }
         
         /*
          * check every 50 ticks that construction can occur for the following main roads to sources and spawn
@@ -85,7 +62,7 @@ let self = module.exports = {
         if (result_Tick == true) {
             let initial_room_setup = building_Layouts.main_roads(room);
             if (initial_room_setup == true) {
-                buildings.spawn_design(room);
+                building_Layouts.spawn_design(room);
             }
 
         }
@@ -96,6 +73,23 @@ let self = module.exports = {
         
         //console.log('Controller Level = ' + room.controller.level);
 
+        /*
+       * RCL       Energy to Upgrade       Structures
+       *---------------------------------------------
+       * 0                 -
+       *---------------------------------------------
+       * 1                 200
+       *---------------------------------------------
+       * 2                 45000           5 ext
+       *---------------------------------------------
+       * 3                 135000          10 ext, 1 tower
+       *---------------------------------------------
+       * 4                 405000          20 ext, 1 tower
+       *---------------------------------------------
+       *
+       *
+       */
+
         switch(room.controller.level) {
             case 0:
                 
@@ -104,7 +98,7 @@ let self = module.exports = {
 
                 break;
             case 2:
-
+                //TODO: need to place first set of extensions
                 break;
             case 3:
 
@@ -123,6 +117,8 @@ let self = module.exports = {
                 break;
             default:
         }
+        diagnostics.visualizations();
     }
+
 
 };

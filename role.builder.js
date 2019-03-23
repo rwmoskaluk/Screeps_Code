@@ -6,16 +6,16 @@
  * var mod = require('role.builder');
  * mod.thing == 'a thing'; // true
  */
-var roleHarvester = require('role.harvester');
-var functionCreep = require('function.creep');
+const roleHarvester = require('role.harvester');
+const functionCreep = require('function.creep');
 
-var roleBuilder = {
+let roleBuilder = {
   run: function(creep) {
         
         functionCreep.run(creep);
         if (creep.memory.renewing == false) {
             if(creep.carry.energy < creep.carryCapacity && creep.memory.building == false) {
-                var sources = creep.pos.findClosestByRange(FIND_SOURCES);
+                let sources = creep.pos.findClosestByRange(FIND_SOURCES);
                 if(creep.harvest(sources) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(sources, {visualizePathStyle: {stroke: '#ffaa00'}});
                 }

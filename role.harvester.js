@@ -6,9 +6,9 @@
  * var mod = require('role.harvester');
  * mod.thing == 'a thing'; // true
  */
-var roleUpgrader = require('role.upgrader');
-var functionCreep = require('function.creep');
-var roleHarvester = {
+const roleUpgrader = require('role.upgrader');
+const functionCreep = require('function.creep');
+const roleHarvester = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
@@ -16,13 +16,13 @@ var roleHarvester = {
        functionCreep.run(creep);
        if (creep.memory.renewing == false) {
            if(creep.carry.energy < creep.carryCapacity) {
-                var sources = creep.pos.findClosestByRange(FIND_SOURCES);
+               let sources = creep.pos.findClosestByRange(FIND_SOURCES);
                 if(creep.harvest(sources) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(sources, {visualizePathStyle: {stroke: '#ffaa00'}});
                 }
             }
             else {
-                var targets = creep.room.find(FIND_STRUCTURES, {
+                let targets = creep.room.find(FIND_STRUCTURES, {
                         filter: (structure) => {
                             return (structure.structureType == STRUCTURE_EXTENSION || structure.structureType == STRUCTURE_SPAWN || structure.structureType == STRUCTURE_TOWER) &&
                                 structure.energy < structure.energyCapacity;

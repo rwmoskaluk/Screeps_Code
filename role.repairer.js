@@ -7,22 +7,22 @@
  * mod.thing == 'a thing'; // true
  */
 
-var roleUpgrader = require('role.upgrader');
-var functionCreep = require('function.creep');
+const roleUpgrader = require('role.upgrader');
+const functionCreep = require('function.creep');
 
-var roleRepairer = {
+let roleRepairer = {
   run: function(creep) {
         
         functionCreep.run(creep);
         if (creep.memory.renewing == false) {
             if(creep.carry.energy < creep.carryCapacity && creep.memory.repairing == false) {
-                var sources = creep.pos.findClosestByRange(FIND_SOURCES);
+                let sources = creep.pos.findClosestByRange(FIND_SOURCES);
                 if(creep.harvest(sources) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(sources, {visualizePathStyle: {stroke: '#ffaa00'}});
                 }
             }
             else {
-                var target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
+                let target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
                     filter: function(object){
                     return object.structureType === STRUCTURE_ROAD && (object.hits < object.hitsMax * 0.5);
                     } 
