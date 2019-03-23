@@ -7,17 +7,17 @@
  *      c) repair flag
  */
  
-var global = require('global.variables');
-var calculations = require('./function.calculations');
-var building_Layouts = require('./function.buildings');
+const global = require('global.variables');
+const calculations = require('./function.calculations');
+const building_Layouts = require('./function.buildings');
 
-var self = module.exports = {
+let self = module.exports = {
     room_info: function(room) {
-        var containers, extensions, tower, storage_Container = 0;
-        var buildings = room.find(FIND_STRUCTURES, {
+        let containers, extensions, tower, storage_Container = 0;
+        let buildings = room.find(FIND_STRUCTURES, {
             filter: {structureType: STRUCTURE_EXTENSION || STRUCTURE_TOWER}
         });
-        var towers = room.find(FIND_STRUCTURES, {
+        let towers = room.find(FIND_STRUCTURES, {
             filter: {structureType: STRUCTURE_TOWER}
         });
         
@@ -45,21 +45,21 @@ var self = module.exports = {
         * show path then draw in red the paths leading from spawn to objects in room
         */
         if (!Memory.paths) {
-            var paths = [];
-            var spawn = room.find(FIND_MY_STRUCTURES, {
+            let paths = [];
+            let spawn = room.find(FIND_MY_STRUCTURES, {
                 filter: function(structure) {
                     return structure.structureType == STRUCTURE_SPAWN;
                 }
             });
-            var room_Controller = room.find(FIND_MY_STRUCTURES, {
+            let room_Controller = room.find(FIND_MY_STRUCTURES, {
                 filter: function(structure) {
                     return structure.structureType == STRUCTURE_CONTROLLER;
                 }
             });
-            var room_Sources = room.find(FIND_SOURCES);
+            let room_Sources = room.find(FIND_SOURCES);
             paths.push({object_Path: room.findPath(spawn[0].pos, room_Controller[0].pos, {ignoreCreeps: true, ignoreRoads: true})});
             
-            for(i = 0; i < room_Sources.length; i++) {
+            for(let i = 0; i < room_Sources.length; i++) {
                 paths.push({object_Path: room.findPath(spawn[0].pos, room_Sources[i].pos, {ignoreCreeps: true, ignoreRoads: true})});
                 paths.push({object_Path: room.findPath(room_Sources[i].pos, room_Controller[0].pos, {ignoreCreeps: true, ignoreRoads: true})});
             }
@@ -67,9 +67,9 @@ var self = module.exports = {
         }
         //draws the roomVisual in red for the source and controller paths
         if (global.showDiagnostics.paths == true) {
-            var colors = ['#ffffff', '#00FFFF', '#FF8C00', '#7FFF00', '#FFD700'];
-            for(i = 0; i < Memory.paths.length; i++){
-                for(j = 0; j < Memory.paths[i].object_Path.length - 1; j++) {
+            let colors = ['#ffffff', '#00FFFF', '#FF8C00', '#7FFF00', '#FFD700'];
+            for(let i = 0; i < Memory.paths.length; i++){
+                for(let j = 0; j < Memory.paths[i].object_Path.length - 1; j++) {
                     new RoomVisual().line(Memory.paths[i].object_Path[j].x, Memory.paths[i].object_Path[j].y, Memory.paths[i].object_Path[j + 1].x, Memory.paths[i].object_Path[j + 1].y, {color: colors[i]});
                 }
             }
@@ -80,15 +80,21 @@ var self = module.exports = {
          * if no spots remaining in the master list then construction flag returns false
         */
         
-        var result_Tick = calculations.skip_ticks(global.delta_Tick);
+        let result_Tick = calculations.skip_ticks(global.delta_Tick);
 
         if (result_Tick == true) {
-            building_Layouts.main_roads(room);
+            let initial_room_setup = building_Layouts.main_roads(room);
+            if (initial_room_setup == true) {
+                buildings.spawn_design(room);
+            }
+
         }
         building_Layouts.initial_locations(room);
-        building_Layouts.spawn_design(room);
+        building_Layouts.tower_design(room);
+
+        //building_Layouts.spawn_design(room);
         
-        console.log('Controller Level = ' + room.controller.level);
+        //console.log('Controller Level = ' + room.controller.level);
 
         switch(room.controller.level) {
             case 0:

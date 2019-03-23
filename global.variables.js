@@ -8,13 +8,13 @@
  */
 
 
-var global = {
+let global = {
     'showDiagnostics': {spawn: true, paths: true, tower: true, spawn_roads: false},
     'delta_Tick': 100,
     'repairers': 2,
     'builders': 2,
     'harvesters': 3,
     'upgraders': 2
-}
+};
 
 module.exports = global;

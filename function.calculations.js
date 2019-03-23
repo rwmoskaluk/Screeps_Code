@@ -7,14 +7,14 @@
  * mod.thing == 'a thing'; // true
  */
 
-var global = require('global.variables'); 
+const global = require('global.variables');
 
 module.exports = {
     skip_ticks: function(delta_Tick) {
         /*
         * function for skipping x amount of ticks for specific calculations
         */
-        var tick_Toggle = false;
+        let tick_Toggle = false;
 
         if (!Memory.initial_Tick || Memory.initial_Tick == 0) {
             Memory.initial_Tick = Game.time;
@@ -32,19 +32,18 @@ module.exports = {
         * function for calculating the distance from a given list of data points in the room
         * uses the calculated centroid of the object list to return distance to centroid
         */
-        var sum_x = 0;
-        var sum_y = 0;
+        let sum_x = 0;
+        let sum_y = 0;
 
-        for(i = 0; i < point_List.length; i++) {
+        for(let i = 0; i < point_List.length; i++) {
             sum_x = point_List[i][0].pos.x + sum_x;
             sum_y = point_List[i][0].pos.y + sum_y;
         }
 
-        var distance = Math.pow((Math.pow((sum_x/point_List.length) - x, 2) + Math.pow((sum_y/point_List.length) - y, 2)), 0.5);
+        let distance = Math.pow((Math.pow((sum_x/point_List.length) - x, 2) + Math.pow((sum_y/point_List.length) - y, 2)), 0.5);
         distance = Math.floor(distance);
         return distance;
         
     }
     
 }
-    

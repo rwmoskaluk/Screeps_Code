@@ -7,17 +7,17 @@
             3) continue with intial find search until each task is complete, then repeat to update
 */
 
-var calculations = require('./function.calculations');
-var roomManager = require('./manager.room');
-var creepManager = require('./manager.creep');
-var defenseTower = require('defense.tower');
+const calculations = require('./function.calculations');
+const roomManager = require('./manager.room');
+const creepManager = require('./manager.creep');
+const defenseTower = require('defense.tower');
 
-var cpuTick = Game.cpu.tickLimit;
+let cpuTick = Game.cpu.tickLimit;
 
 
 module.exports.loop = function() {
     
-    var cpuUsed = Game.cpu.getUsed();
+    let cpuUsed = Game.cpu.getUsed();
     console.log('++++++++++++++++++++++++++++++++++');
     console.log("CPU used = " + JSON.stringify(cpuUsed));
     //console.log(JSON.stringify(cpuUsed));
@@ -33,14 +33,14 @@ module.exports.loop = function() {
         }
         
         for (let name in Game.rooms) {
-            var roomName = name;
-            var currentRoom = Game.rooms[roomName];
+            let roomName = name;
+            let currentRoom = Game.rooms[roomName];
             roomManager.room_info(currentRoom);
             
             if(!Memory.initial_Tick) {
                 Memory.initial_Tick = 0;
             }
-            var hostiles = currentRoom.find(FIND_HOSTILE_CREEPS);
+            let hostiles = currentRoom.find(FIND_HOSTILE_CREEPS);
             if(hostiles.length > 0) {
                 defenseTower.run(currentRoom);
             }
@@ -51,4 +51,4 @@ module.exports.loop = function() {
         creepManager.spawn_manager();
         console.log('++++++++++++++++++++++++++++++++++');
     }
-}
+};
