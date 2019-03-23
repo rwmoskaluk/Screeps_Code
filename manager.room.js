@@ -117,7 +117,7 @@ let self = module.exports = {
                 break;
             default:
         }
-        diagnostics.visualizations();
+        diagnostics.visualizations(room);
     }
 
 
