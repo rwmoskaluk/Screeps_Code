@@ -118,7 +118,9 @@ let self = module.exports = {
             default:
         }
         diagnostics.visualizations(room);
-    }
+        diagnostics.print_tasks();
+    },
+
 
 
 };

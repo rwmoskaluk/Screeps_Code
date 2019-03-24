@@ -56,5 +56,17 @@ module.exports = {
             }
         }
     },
+
+    print_tasks : function() {
+        let top_tasks = Memory.task_list.sort(function ( a, b ) { return b.rank - a.rank; });
+        for (let i = 0; i < 10; i++) {
+            if (top_tasks.length < i) {
+                break;
+            }
+            else {
+                console.log(JSON.stringify(top_tasks[i]));
+            }
+        }
+    }
 }
 ;

@@ -67,6 +67,13 @@ module.exports = {
             }
         }
     },
+
+    work_manager : function(room) {
+      /*
+          Assigns tasks to creeps, feedback sent to simple_manager() function for if there are too many tasks and not enough
+          creeps to perform them
+       */
+    },
     
     spawn_manager: function() {
         let harvesters = _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester');
