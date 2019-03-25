@@ -3,8 +3,6 @@
  *
  *
  */
-
-const global = require('global.variables');
 const calculations = require('./function.calculations');
 
 module.exports = {
@@ -29,7 +27,7 @@ module.exports = {
         for (let i = 0; i < Memory.paths.length; i++) {
             for (let j = 0; j < Memory.paths[i].object_Path.length; j++) {
                 let location = room.lookAt(Memory.paths[i].object_Path[j].x, Memory.paths[i].object_Path[j].y);
-                if (location[0].type != 'structure' && location[0].type != 'constructionSite' && location[0].type != 'creep' && location[0].type != 'source') {
+                if (location[0].type !== 'structure' && location[0].type !== 'constructionSite' && location[0].type !== 'creep' && location[0].type !== 'source') {
                     room.createConstructionSite(Memory.paths[i].object_Path[j].x, Memory.paths[i].object_Path[j].y, STRUCTURE_ROAD);
                 }
             }
@@ -90,7 +88,7 @@ module.exports = {
             let sum_y = 0;
 
             for (let j = 0; j < 3; j++) {
-                if (j == 0) {
+                if (j === 0) {
                     for (let i = 0; i < Memory.room_Locations.length; i++) {
                         sum_x += Memory.room_Locations[i][0].pos.x;
                         sum_y += Memory.room_Locations[i][0].pos.y;
@@ -141,7 +139,7 @@ module.exports = {
         */
         let spawn = room.find(FIND_MY_STRUCTURES, {
             filter: function (structure) {
-                return structure.structureType == STRUCTURE_SPAWN;
+                return structure.structureType === STRUCTURE_SPAWN;
             }
         });
 
@@ -149,7 +147,7 @@ module.exports = {
 
             let spawnArea = room.lookAtArea(spawn[0].pos.y - 5, spawn[0].pos.x - 5, spawn[0].pos.y + 5, spawn[0].pos.x + 5, true);
             let results = _.filter(spawnArea, function (position) {
-                return (position.x >= spawn[0].pos.x - 5 && position.x <= spawn[0].pos.x + 5 && position.y >= spawn[0].pos.y - 5 && position.y <= spawn[0].pos.y + 5 && (position.x != spawn[0].pos.x || position.y != spawn[0].pos.y));
+                return (position.x >= spawn[0].pos.x - 5 && position.x <= spawn[0].pos.x + 5 && position.y >= spawn[0].pos.y - 5 && position.y <= spawn[0].pos.y + 5 && (position.x !== spawn[0].pos.x || position.y !== spawn[0].pos.y));
             });
             Memory.spawnArea = results;
         }
@@ -191,17 +189,17 @@ module.exports = {
          */
         let quadrant = [];
         let extension_flag = true;
-        if (quad_choice == 1) {
+        if (quad_choice === 1) {
             for(let i = 1; i < 6; i++) {
                 for(let j = 1; j < 6; j++) {
                     let position = new RoomPosition(spawn[0].pos.x + j, spawn[0].pos.y - i, room.name);
                     const look = position.look();
-                    if (look.length <= 1 && look[0].terrain != 'wall') {
-                        if (position.x == spawn[0].pos.x + 1 && position.y == spawn[0].pos.y - 1) {
+                    if (look.length <= 1 && look[0].terrain !== 'wall') {
+                        if (position.x === spawn[0].pos.x + 1 && position.y === spawn[0].pos.y - 1) {
                             quadrant.push({'x':position.x, 'y':position.y, 'planned_construction':'road', 'roomName':position.roomName});
                         }
                         else {
-                            if (extension_flag == true) {
+                            if (extension_flag === true) {
                                 quadrant.push({'x':position.x, 'y':position.y, 'planned_construction':'extension', 'roomName':position.roomName});
                                 extension_flag = false;
                             }
@@ -215,17 +213,17 @@ module.exports = {
             }
 
         }
-        if (quad_choice == 2) {
+        if (quad_choice === 2) {
             for(let i = 1; i < 6; i++) {
                 for(let j = 1; j < 6; j++) {
                     let position = new RoomPosition(spawn[0].pos.x - j, spawn[0].pos.y - i, room.name);
                     const look = position.look();
-                    if (look.length <= 1 && look[0].terrain != 'wall') {
-                        if (position.x == spawn[0].pos.x - 1 && position.y == spawn[0].pos.y - 1) {
+                    if (look.length <= 1 && look[0].terrain !== 'wall') {
+                        if (position.x === spawn[0].pos.x - 1 && position.y === spawn[0].pos.y - 1) {
                             quadrant.push({'x':position.x, 'y':position.y, 'planned_construction':'road', 'roomName':position.roomName});
                         }
                         else {
-                            if (extension_flag == true) {
+                            if (extension_flag === true) {
                                 quadrant.push({'x':position.x, 'y':position.y, 'planned_construction':'extension', 'roomName':position.roomName});
                                 extension_flag = false;
                             }
@@ -238,17 +236,17 @@ module.exports = {
                 }
             }
         }
-        if (quad_choice == 3) {
+        if (quad_choice === 3) {
             for(let i = 1; i < 6; i++) {
                 for(let j = 1; j < 6; j++) {
                     let position = new RoomPosition(spawn[0].pos.x - j, spawn[0].pos.y + i, room.name);
                     const look = position.look();
-                    if (look.length <= 1 && look[0].terrain != 'wall') {
-                        if (position.x == spawn[0].pos.x - 1 && position.y == spawn[0].pos.y + 1) {
+                    if (look.length <= 1 && look[0].terrain !== 'wall') {
+                        if (position.x === spawn[0].pos.x - 1 && position.y === spawn[0].pos.y + 1) {
                             quadrant.push({'x':position.x, 'y':position.y, 'planned_construction':'road', 'roomName':position.roomName});
                         }
                         else {
-                            if (extension_flag == true) {
+                            if (extension_flag === true) {
                                 quadrant.push({'x':position.x, 'y':position.y, 'planned_construction':'extension', 'roomName':position.roomName});
                                 extension_flag = false;
                             }
@@ -261,17 +259,17 @@ module.exports = {
                 }
             }
         }
-        if (quad_choice == 4) {
+        if (quad_choice === 4) {
             for(let i = 1; i < 6; i++) {
                 for(let j = 1; j < 6; j++) {
                     let position = new RoomPosition(spawn[0].pos.x + j, spawn[0].pos.y + i, room.name);
                     const look = position.look();
-                    if (look.length <= 1 && look[0].terrain != 'wall') {
-                        if (position.x == spawn[0].pos.x + 1 && position.y == spawn[0].pos.y + 1) {
+                    if (look.length <= 1 && look[0].terrain !== 'wall') {
+                        if (position.x === spawn[0].pos.x + 1 && position.y === spawn[0].pos.y + 1) {
                             quadrant.push({'x':position.x, 'y':position.y, 'planned_construction':'road', 'roomName':position.roomName});
                         }
                         else {
-                            if (extension_flag == true) {
+                            if (extension_flag === true) {
                                 quadrant.push({'x':position.x, 'y':position.y, 'planned_construction':'extension', 'roomName':position.roomName});
                                 extension_flag = false;
                             }

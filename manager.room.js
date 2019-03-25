@@ -13,7 +13,13 @@ const building_Layouts = require('./function.buildings');
 const diagnostics = require('./diagnostics');
 
 let self = module.exports = {
-    room_info: function(room) {
+
+    room_manager : function(room) {
+        /*
+         * check every 50 ticks that construction can occur for the following main roads to sources and spawn
+         * if no spots remaining in the master list then construction flag returns false
+        */
+
         let containers, extensions, tower, storage_Container = 0;
         let buildings = room.find(FIND_STRUCTURES, {
             filter: {structureType: STRUCTURE_EXTENSION || STRUCTURE_TOWER}
@@ -21,47 +27,12 @@ let self = module.exports = {
         let towers = room.find(FIND_STRUCTURES, {
             filter: {structureType: STRUCTURE_TOWER}
         });
-        
 
-        
-        /*
-        * Calculate optimal path to each source and controller from spawn
-        * store this in an array 
-        * check off when road has been completed to each
-        * show path then draw in red the paths leading from spawn to objects in room
-        */
-        if (!Memory.paths) {
-            let paths = [];
-            let spawn = room.find(FIND_MY_STRUCTURES, {
-                filter: function(structure) {
-                    return structure.structureType == STRUCTURE_SPAWN;
-                }
-            });
-            let room_Controller = room.find(FIND_MY_STRUCTURES, {
-                filter: function(structure) {
-                    return structure.structureType == STRUCTURE_CONTROLLER;
-                }
-            });
-            let room_Sources = room.find(FIND_SOURCES);
-            paths.push({object_Path: room.findPath(spawn[0].pos, room_Controller[0].pos, {ignoreCreeps: true, ignoreRoads: true})});
-            
-            for(let i = 0; i < room_Sources.length; i++) {
-                paths.push({object_Path: room.findPath(spawn[0].pos, room_Sources[i].pos, {ignoreCreeps: true, ignoreRoads: true})});
-                paths.push({object_Path: room.findPath(room_Sources[i].pos, room_Controller[0].pos, {ignoreCreeps: true, ignoreRoads: true})});
-            }
-            Memory.paths = paths;
-        }
-        
-        /*
-         * check every 50 ticks that construction can occur for the following main roads to sources and spawn
-         * if no spots remaining in the master list then construction flag returns false
-        */
-        
         let result_Tick = calculations.skip_ticks(global.delta_Tick);
 
-        if (result_Tick == true) {
+        if (result_Tick === true) {
             let initial_room_setup = building_Layouts.main_roads(room);
-            if (initial_room_setup == true) {
+            if (initial_room_setup === true) {
                 building_Layouts.spawn_design(room);
             }
 
@@ -69,9 +40,8 @@ let self = module.exports = {
         building_Layouts.initial_locations(room);
         building_Layouts.tower_design(room);
 
-        //building_Layouts.spawn_design(room);
-        
-        //console.log('Controller Level = ' + room.controller.level);
+
+        console.log('Controller Level = ' + room.controller.level);
 
         /*
        * RCL       Energy to Upgrade       Structures
@@ -92,18 +62,18 @@ let self = module.exports = {
 
         switch(room.controller.level) {
             case 0:
-                
+
                 break;
             case 1:
 
                 break;
             case 2:
                 //TODO: need to place first set of extensions
+                //this.construction_manager(room, 2);
                 break;
             case 3:
 
                 if(towers.length < 1) {
-                    console.log("building tower here code");
                     //building_Layouts.tower_design(room);
                 }
                 break;
@@ -120,6 +90,21 @@ let self = module.exports = {
         diagnostics.visualizations(room);
         diagnostics.print_tasks();
     },
+
+    construction_manager : function(room, rcl) {
+        /*
+            Function for managing construction sites based on next RCL
+            //TODO: top priority
+         */
+        switch (rcl) {
+            case 2:
+                // 5 extensions available
+                // check how many extensions construction sites have been placed
+                // along with how many extensions exist as structures
+                //for (let i = 0; i < 5; i++)
+        }
+
+    }
 
 
 

@@ -25,25 +25,25 @@ let functionCreep = {
         let creepMaxTime = 1500;
         let creepTickFullPercent = 0.95;
         let creepTickPercent = 0.3;
-        if (creep.memory.renewing == false) {
+        if (creep.memory.renewing === false) {
 
-            if (creep.ticksToLive <= creepTickPercent * creepMaxTime) {
+            if (creep.ticksToLive <= creepTickPercent * creepMaxTime && creep.memory.run_clock_out === false) {
                 creep.memory.renewing = true;
             }
         }
         else {
             let spawn = creep.room.find(FIND_MY_STRUCTURES, {
                 filter: function(structure) {
-                    return structure.structureType == STRUCTURE_SPAWN;
+                    return structure.structureType === STRUCTURE_SPAWN;
                 }
             });
             if (spawn.length > 0) {
 
-                if (spawn[0].renewCreep(creep) == ERR_NOT_IN_RANGE) {
+                if (spawn[0].renewCreep(creep) === ERR_NOT_IN_RANGE) {
                     creep.moveTo(spawn[0], {visualizePathStyle: {stroke: '#ffaa00'}});
                 }
                 else {
-                     if(creep.transfer(spawn[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                     if(creep.transfer(spawn[0], RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
                         creep.moveTo(spawn[0], {visualizePathStyle: {stroke: '#ffffff'}});
                     }
                     spawn[0].renewCreep(creep);

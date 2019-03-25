@@ -7,8 +7,6 @@
  * mod.thing == 'a thing'; // true
  */
 
-const global = require('global.variables');
-
 module.exports = {
     skip_ticks: function(delta_Tick) {
         /*
@@ -16,7 +14,7 @@ module.exports = {
         */
         let tick_Toggle = false;
 
-        if (!Memory.initial_Tick || Memory.initial_Tick == 0) {
+        if (!Memory.initial_Tick || Memory.initial_Tick === 0) {
             Memory.initial_Tick = Game.time;
         }
 
@@ -44,6 +42,6 @@ module.exports = {
         distance = Math.floor(distance);
         return distance;
         
-    }
+    },
     
-}
+};

@@ -8,6 +8,7 @@
 */
 
 const roomManager = require('./manager.room');
+const roomInfo = require('./function.room');
 const creepManager = require('./manager.creep');
 const defenseTower = require('defense.tower');
 const utils = require('./function.utils');
@@ -19,18 +20,25 @@ let cpuTick = Game.cpu.tickLimit;
 module.exports.loop = function() {
     
     let cpuUsed = Game.cpu.getUsed();
-    console.log('++++++++++++++++++++++++++++++++++');
+    console.log('+++++++++++++START++++++++++++++++++');
     console.log("CPU used = " + JSON.stringify(cpuUsed));
     //console.log(JSON.stringify(cpuUsed));
-    let test = utils.hash('test');
-    
+
     if (cpuUsed < cpuTick) {
         
         for (let name in Memory.creeps)
         {
-            if (Game.creeps[name] == undefined)
+            if (Game.creeps[name] === undefined)
             {
                 delete Memory.creeps[name];
+            }
+        }
+        if (!Memory.task_list) {
+            for (let name in Game.rooms) {
+                let roomName = name;
+                let currentRoom = Game.rooms[roomName];
+                tasks.task_list(currentRoom);
+                tasks.task_filter();
             }
         }
         let hashCheck = tasks.state_checker();
@@ -38,24 +46,26 @@ module.exports.loop = function() {
         let newHash = utils.hash(hashCheck);
 
         console.log('newhash = ', newHash);
-        if(Memory.stateCheck != newHash) {
+        if(Memory.stateCheck !== newHash) {
             // Game state has changed!
             Memory.stateCheck = newHash;
 
-            let states = tasks.state_checker();
-            console.log('states = ', JSON.stringify(states));
             for (let name in Game.spawns) {
                 tasks.task_list(Game.spawns[name].room);
+                tasks.task_filter();
             }
+            let states = tasks.state_checker();
+            console.log('states = ', JSON.stringify(states));
+
         }
 
         else{
             // Game state is the same
         }
         for (let name in Game.rooms) {
-            let roomName = name;
-            let currentRoom = Game.rooms[roomName];
-            roomManager.room_info(currentRoom);
+            let currentRoom = Game.rooms[name];
+            roomInfo.room_info(currentRoom);
+
 
             if (!Memory.initial_Tick) {
                 Memory.initial_Tick = 0;
@@ -65,10 +75,14 @@ module.exports.loop = function() {
                 defenseTower.run(currentRoom);
             }
 
+            roomManager.room_manager(currentRoom);
             creepManager.simple_manager(currentRoom);
+
+        }
+        for (let creep in Memory.creeps) {
+            //console.log(JSON.stringify(Memory.creeps[creep]));
         }
         
-        creepManager.spawn_manager();
-        console.log('++++++++++++++++++++++++++++++++++');
+        console.log('+++++++++++++++END++++++++++++++++');
     }
 };
