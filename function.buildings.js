@@ -81,6 +81,16 @@ module.exports = {
     *   
     */
     tower_design: function (room) {
+        /*
+            TODO: Use search within range built in function around specific areas
+                then check if those areas are not walls
+                check if they block a path
+                check that they are accessible
+                then rank all remaining areas for best choice for a tower location
+                store location in memory
+
+         */
+
         if (!Memory.tower_Locations) {
             Memory.tower_Locations = [];
             let tower_Location = [];

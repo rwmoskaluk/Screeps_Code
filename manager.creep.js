@@ -78,7 +78,7 @@ module.exports = {
                 spawn_flag = true;
             }
         }
-        if (repairers.length <= global.repairers && spawn_flag === false) {
+        if (repairers.length < global.repairers && spawn_flag === false) {
             // min # of repairers to have
             empty_flag = utils.isEmpty(Memory.repair_jobs);
             if (empty_flag === false) {
