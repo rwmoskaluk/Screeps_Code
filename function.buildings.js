@@ -28,7 +28,7 @@ module.exports = {
             for (let j = 0; j < Memory.paths[i].object_Path.length; j++) {
                 let location = room.lookAt(Memory.paths[i].object_Path[j].x, Memory.paths[i].object_Path[j].y);
                 if (location[0].type !== 'structure' && location[0].type !== 'constructionSite' && location[0].type !== 'creep' && location[0].type !== 'source') {
-                    room.createConstructionSite(Memory.paths[i].object_Path[j].x, Memory.paths[i].object_Path[j].y, STRUCTURE_ROAD);
+                    //room.createConstructionSite(Memory.paths[i].object_Path[j].x, Memory.paths[i].object_Path[j].y, STRUCTURE_ROAD);
                 }
             }
         }
