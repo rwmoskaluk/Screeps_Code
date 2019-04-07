@@ -19,9 +19,6 @@ Main Base
 //TODO: 3) Tower energy drop off
 //TODO: 4) Creep upgrades for better creeps
 //TODO: 5) Management system for which creep has what role
-//TODO: 6) SpawnDesign
-    a) checker pattern extensions with road
-    b) build 1 unit off of spawn
 //TODO: 7) Order for placing roads -> extensions -> containers -> towers
 //TODO: 8) Source mining management
 //TODO: 9) Wall building
@@ -29,7 +26,9 @@ Main Base
 //TODO: 11) Room defense
 //TODO: 12) store variables in Memory.room
 //TODO: 13) Serialize paths to room data so no need to calculate anymore
-//TODO: 12) have code check if spawn actually exists
+//TODO: 14) have code check if spawn actually exists
+
+//TODO 15) Add in creep non movement ticker, if creep does not move for X ticks then move it off position and assign new task?
 
 
 Exploring

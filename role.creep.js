@@ -20,7 +20,7 @@ const roleCreep = {
 
 
         if (current_role === 'harvester') {
-            if (creep.memory.renewing === false) {
+            if (creep.memory.renewing === false  && creep.memory.recycle_me === false) {
                 if (creep.carry.energy < creep.carryCapacity) {
                     let sources = {};
                     if (creep.memory.source === '') {
@@ -51,7 +51,7 @@ const roleCreep = {
             }
         }
         else if (current_role === 'upgrader') {
-            if (creep.memory.renewing === false) {
+            if (creep.memory.renewing === false && creep.memory.recycle_me === false) {
                 if(creep.memory.upgrading && creep.carry.energy === 0) {
                     creep.memory.upgrading = false;
                     //creep.say('🔄 harvest');
@@ -89,7 +89,7 @@ const roleCreep = {
             }
         }
         else if (current_role === 'builder') {
-            if (creep.memory.renewing === false) {
+            if (creep.memory.renewing === false && creep.memory.recycle_me === false) {
                 if (creep.carry.energy < creep.carryCapacity && creep.memory.building === false) {
                     let sources = {};
                         if (creep.memory.source === '') {
@@ -133,7 +133,7 @@ const roleCreep = {
             }
         }
         else if (current_role === 'repairer') {
-            if (creep.memory.renewing === false) {
+            if (creep.memory.renewing === false && creep.memory.recycle_me === false) {
                 if (creep.carry.energy < creep.carryCapacity && creep.memory.repairing === false) {
                     let sources = {};
                     if (creep.memory.source === '') {

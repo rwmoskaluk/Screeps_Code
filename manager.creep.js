@@ -19,7 +19,8 @@ module.exports = {
         this.controller_job_manager(room);
         this.construction_job_manager(room);
         this.repair_job_manager(room);
-
+        this.creep_upgrade(room);
+        this.creep_replacer(room);
 
         for (let name in Game.creeps) {
             let creep = Game.creeps[name];
@@ -40,50 +41,59 @@ module.exports = {
         /*
             Function for checking task list vs current creep types
         */
-        let harvesters = _.filter(Game.creeps, (creep) => creep.memory.role === 'harvester' || creep.memory.temp_role === 'harvester');
-        let upgraders = _.filter(Game.creeps, (creep) => creep.memory.role === 'upgrader' || creep.memory.temp_role === 'upgrader');
-        let builders = _.filter(Game.creeps, (creep) => creep.memory.role === 'builder' || creep.memory.temp_role === 'builder');
-        let repairers = _.filter(Game.creeps, (creep) => creep.memory.role === 'repairer' || creep.memory.temp_role === 'repairer');
-        let body = [];
-
-        let spawn_flag = false;
-        let empty_flag = false;
-
-        if (harvesters.length < global.harvesters && spawn_flag === false) {
-
-            // min # of harvesters to have
-            empty_flag = utils.isEmpty(Memory.energy_jobs);
-            if (empty_flag === false) {
-                body = this.creep_body_configurator(room, 'harvester');
-                this.creep_creator(room, body, 'harvester', Memory.energy_jobs[0].id, null);
-                spawn_flag = true;
-            }
+        if (!Memory.command_checks) {
+            Memory.command_checks = {};
+            Memory.command_checks.flag = false;
+            Memory.command_checks.creep_name = '';
+            Memory.command_checks.spawning_creep = false;
         }
-        if (upgraders.length < global.upgraders && spawn_flag === false) {
-            // min # of harvesters to have
-            // create an upgrader unit to fulfill this task
-            empty_flag = utils.isEmpty(Memory.controller_jobs);
-            if (empty_flag === false) {
-                body = this.creep_body_configurator(room, 'upgrader');
-                this.creep_creator(room, body, 'upgrader', Memory.controller_jobs[0].id, null);
-                spawn_flag = true;
+
+        if (Memory.command_checks.spawning_creep === false) {
+            let harvesters = _.filter(Game.creeps, (creep) => creep.memory.role === 'harvester' || creep.memory.temp_role === 'harvester');
+            let upgraders = _.filter(Game.creeps, (creep) => creep.memory.role === 'upgrader' || creep.memory.temp_role === 'upgrader');
+            let builders = _.filter(Game.creeps, (creep) => creep.memory.role === 'builder' || creep.memory.temp_role === 'builder');
+            let repairers = _.filter(Game.creeps, (creep) => creep.memory.role === 'repairer' || creep.memory.temp_role === 'repairer');
+            let body = [];
+
+            let spawn_flag = false;
+            let empty_flag = false;
+
+            if (harvesters.length < global.harvesters && spawn_flag === false) {
+
+                // min # of harvesters to have
+                empty_flag = utils.isEmpty(Memory.energy_jobs);
+                if (empty_flag === false) {
+                    body = this.creep_body_configurator(room, 'harvester');
+                    this.creep_creator(room, body, 'harvester', Memory.energy_jobs[0].id, null);
+                    spawn_flag = true;
+                }
             }
-        }
-        if (builders.length < global.builders && spawn_flag === false) {
-            // min # of builders to have at least 1 if construction jobs
-            empty_flag = utils.isEmpty(Memory.construction_jobs);
-            if (empty_flag === false) {
-                body = this.creep_body_configurator(room, 'builder');
-                this.creep_creator(room, body, 'builder', Memory.construction_jobs[0].id, null);
-                spawn_flag = true;
+            if (upgraders.length < global.upgraders && spawn_flag === false) {
+                // min # of harvesters to have
+                // create an upgrader unit to fulfill this task
+                empty_flag = utils.isEmpty(Memory.controller_jobs);
+                if (empty_flag === false) {
+                    body = this.creep_body_configurator(room, 'upgrader');
+                    this.creep_creator(room, body, 'upgrader', Memory.controller_jobs[0].id, null);
+                    spawn_flag = true;
+                }
             }
-        }
-        if (repairers.length < global.repairers && spawn_flag === false) {
-            // min # of repairers to have
-            empty_flag = utils.isEmpty(Memory.repair_jobs);
-            if (empty_flag === false) {
-                body = this.creep_body_configurator(room, 'repairer');
-                this.creep_creator(room, body, 'repairer', Memory.repair_jobs[0].id, null);
+            if (builders.length < global.builders && spawn_flag === false) {
+                // min # of builders to have at least 1 if construction jobs
+                empty_flag = utils.isEmpty(Memory.construction_jobs);
+                if (empty_flag === false) {
+                    body = this.creep_body_configurator(room, 'builder');
+                    this.creep_creator(room, body, 'builder', Memory.construction_jobs[0].id, null);
+                    spawn_flag = true;
+                }
+            }
+            if (repairers.length < global.repairers && spawn_flag === false) {
+                // min # of repairers to have
+                empty_flag = utils.isEmpty(Memory.repair_jobs);
+                if (empty_flag === false) {
+                    body = this.creep_body_configurator(room, 'repairer');
+                    this.creep_creator(room, body, 'repairer', Memory.repair_jobs[0].id, null);
+                }
             }
         }
 
@@ -191,6 +201,111 @@ module.exports = {
         }
     },
 
+    creep_upgrade: function (room) {
+        /*
+            Function for forcing creeps to slowly change based on new extension
+            1) Poll current creep body average
+            2) Check against # of extensions/max energy
+            3) If below force upgrading of all creeps to next level
+                a) Use force flag that only get's set here and can not be overridden
+            4) Switch one creep out at a time for next upgrade path
+            5) Trigger suicide when next level creep is created to replace previous creep
+         */
+        let extensions = room.find(FIND_MY_STRUCTURES, {
+            filter: function (structure) {
+                return structure.structureType === STRUCTURE_EXTENSION;
+            }
+        });
+        let energy_pool = 300;
+        let energy_total = 0;
+        energy_pool += (extensions.length * 50);
+
+        if (Memory.command_checks.flag === false  && Memory.command_checks.spawning_creep === false) {
+            for (let name in Memory.creeps) {
+                let creep = Game.creeps[name];
+                energy_total = 0;
+                for (let body_part in creep.body) {
+                    switch (creep.body[body_part].type) {
+                        case 'work':
+                            energy_total += 100;
+                            break;
+                        case 'carry':
+                            energy_total += 50;
+                            break;
+                        case 'move':
+                            energy_total += 50;
+                            break;
+                    }
+                }
+                if (energy_total < energy_pool) {
+                    // select creep for upgrade
+                    Memory.command_checks.flag = true;
+                    Memory.command_checks.creep_name = name;
+                    creep.upgrading_self = true;
+                    break;
+                }
+            }
+        }
+
+
+    },
+
+    creep_replacer: function (room) {
+        /*
+          Function for replacing creeps when an upgrade needs to occur
+          1) check creep role
+          2) check if spawn can create creep
+          3) create new creep
+          4) delete old creep of that nae
+          5) reset global memory commands
+         */
+        if (Object.keys(Memory.creeps).length > 0) {
+            let spawn = room.find(FIND_MY_STRUCTURES, {
+                filter: function (structure) {
+                    return structure.structureType === STRUCTURE_SPAWN;
+                }
+            });
+            if (Memory.command_checks.spawning_creep === false && Memory.command_checks.flag === true) {
+                if (!Memory.creeps[Memory.command_checks.creep_name]) {
+                    //reset the commands
+                    Memory.command_checks.creep_name = '';
+                    Memory.command_checks.flag = false;
+                    Memory.command_checks.spawning_creep = false;
+                }
+                else {
+                    Memory.creeps[Memory.command_checks.creep_name].upgrading_self = true;
+                    let body = this.creep_body_configurator(room, Memory.creeps[Memory.command_checks.creep_name].role);
+                    let new_creep = Game.spawns[spawn[0].name].createCreep(body, undefined, {
+                        role: Memory.creeps[Memory.command_checks.creep_name].role,
+                        assignment: Memory.creeps[Memory.command_checks.creep_name].assignment,
+                        temp_role: Memory.creeps[Memory.command_checks.creep_name].temp_role,
+                        run_clock_out: false,
+                        source: '',
+                        upgrading_self: false,
+                        recycle_me: false,
+                        renewing: false,
+                        building: false,
+                        upgrading: false,
+                        repairing: false
+                    });
+                    if (new_creep !== -4 && new_creep !== -6) {
+                        Memory.command_checks.spawning_creep = true;
+                    }
+                }
+            }
+
+            if (Memory.command_checks.spawning_creep === true && Memory.command_checks.flag === true) {
+                if (Game.spawns[spawn[0].name].spawning === null) {
+                    Memory.command_checks.spawning_creep = false;
+                    Memory.command_checks.flag = false;
+                    Memory.creeps[Memory.command_checks.creep_name].recycle_me = true;
+                    Memory.command_checks.creep_name = '';
+                }
+            }
+        }
+
+    },
+
     creep_creator: function (room, body, role, assignment, temp_role) {
         /*
             Function for creating customized creeps
@@ -208,7 +323,13 @@ module.exports = {
             assignment: assignment,
             temp_role: temp_role,
             run_clock_out: false,
-            source: ''
+            source: '',
+            upgrading_self: false,
+            recycle_me: false,
+            renewing: false,
+            building: false,
+            upgrading: false,
+            repairing: false
         });
         console.log('Spawning new creep: ' + new_creep);
 
@@ -226,12 +347,11 @@ module.exports = {
                 return structure.structureType === STRUCTURE_EXTENSION;
             }
         });
-        console.log('Creep role is = ', role);
         let harvesters = _.filter(Game.creeps, (creep) => creep.memory.role === 'harvester');
         let energy_pool = 300;
         let body = [WORK, WORK, CARRY, MOVE]; // 300 energy from spawn
 
-        if (harvesters.length <= 0) {
+        if (harvesters.length <= 0 && Memory.command_checks.spawning_creep === false) {
             // use spawn only option for creating a creep
             energy_pool = 300;
         } else {
@@ -239,7 +359,7 @@ module.exports = {
             energy_pool += (extensions.length * 50);
 
         }
-        console.log('Energy pool = ', energy_pool);
+        //console.log('Energy pool = ', energy_pool);
         /*
             Body Part       Build Cost
             ----------------------------

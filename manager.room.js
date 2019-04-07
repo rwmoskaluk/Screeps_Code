@@ -19,13 +19,8 @@ let self = module.exports = {
          * check every 50 ticks that construction can occur for the following main roads to sources and spawn
          * if no spots remaining in the master list then construction flag returns false
         */
-
-        let towers = room.find(FIND_STRUCTURES, {
-            filter: {structureType: STRUCTURE_TOWER}
-        });
-
         let result_Tick = calculations.skip_ticks(global.delta_Tick);
-
+        //result_Tick = true;
         if (result_Tick === true) {
             let initial_room_setup = building_Layouts.main_roads(room);
             if (initial_room_setup === true) {
@@ -211,6 +206,6 @@ let self = module.exports = {
                 }
             }
         }
-    }
+    },
 
 };
