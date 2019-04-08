@@ -21,7 +21,7 @@ const roleCreep = {
 
         if (current_role === 'harvester') {
             if (creep.memory.renewing === false  && creep.memory.recycle_me === false) {
-                if (creep.carry.energy < creep.carryCapacity) {
+                if (creep.carry.energy < creep.carryCapacity  && creep.memory.harvesting === true) {
                     let sources = {};
                     if (creep.memory.source === '') {
                         sources = creep.pos.findClosestByRange(FIND_SOURCES);
@@ -33,6 +33,7 @@ const roleCreep = {
                         creep.moveTo(sources, {visualizePathStyle: {stroke: '#ffaa00'}});
                     }
                 } else {
+                    creep.memory.harvesting = false;
                     let targets = creep.room.find(FIND_STRUCTURES, {
                         filter: (structure) => {
                             return (structure.structureType === STRUCTURE_EXTENSION || structure.structureType === STRUCTURE_SPAWN || structure.structureType === STRUCTURE_TOWER) &&
@@ -46,6 +47,10 @@ const roleCreep = {
                     } else {
                         //roleUpgrader.run(creep);
                         //creep.memory.assignment = '';
+                    }
+                    if (creep.carry.energy <= 0) {
+                        // reset to obtain more energy
+                        creep.memory.harvesting = true;
                     }
                 }
             }
@@ -168,7 +173,7 @@ const roleCreep = {
             }
         }
         else if (current_role === 'fighter') {
-
+            // TODO: add in fighter creep here
         }
 
     }

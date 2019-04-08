@@ -286,7 +286,8 @@ module.exports = {
                         renewing: false,
                         building: false,
                         upgrading: false,
-                        repairing: false
+                        repairing: false,
+                        harvesting: false
                     });
                     if (new_creep !== -4 && new_creep !== -6) {
                         Memory.command_checks.spawning_creep = true;
@@ -329,7 +330,8 @@ module.exports = {
             renewing: false,
             building: false,
             upgrading: false,
-            repairing: false
+            repairing: false,
+            harvesting: false
         });
         console.log('Spawning new creep: ' + new_creep);
 
